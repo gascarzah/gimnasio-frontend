@@ -1,0 +1,32 @@
+<form  [formGroup]="form" (ngSubmit)="operar()" #espForm="ngForm">
+
+<div class="wrapper ">
+
+
+  <div class="aside">
+ <mat-toolbar>Productos</mat-toolbar>
+       <div [hidden]="true">
+          <mat-form-field appearance="fill">
+              <input matInput placeholder="ID" required formControlName="id">
+          </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="fill" >
+          <input matInput placeholder="Nombre Producto" required formControlName="nombre">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <input matInput placeholder="Descripcion" required formControlName="descripcion">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" >
+      <input matInput placeholder="Precio" required formControlName="precio" >
+    </mat-form-field>
+
+
+
+    <button mat-raised-button color="primary" type="submit" >Registrar</button>
+  </div>
+
+</div>
+</form>
