@@ -65,7 +65,7 @@ displayedColumns = [
   'numVenta',
   'cliente',
   'tipoRecibo',
-  'plan',
+  // 'plan',
   'activo',
   'acciones'
 ];

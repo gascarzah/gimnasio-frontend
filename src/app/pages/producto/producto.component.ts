@@ -26,7 +26,9 @@ export class ProductoComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   cantidad: number = 0;
 //para los dialogos de mantenimiento
-
+  nombre : string
+      descripcion: string
+      precio: number
 
 activo: boolean = true;
 
@@ -34,7 +36,8 @@ activo: boolean = true;
   constructor(
     private productoService: ProductoService,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+
   ) { }
 
   ngOnInit(): void {
@@ -97,7 +100,49 @@ activo: boolean = true;
     });
   }
 
+  openDialog(): void {
+    console.log('xxxfdsfdsa')
+    const dialogRef = this.dialog.open(ProductoEdicionComponent, {
+      width: '500px',
+      // height: '600px',
+      maxHeight: '600px',
+      data: {
+            nombre: this.nombre,
+            descripcion: this.descripcion,
+            precio: this.precio,
+            // categoriaProducto: this.categoriaProducto,
+            // stock: this.stock
 
+             }
+
+    });
+
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`The dialog was closed  ${result}`);
+    });
+  }
+
+  openDialogMod(element: any): void {
+    console.log(element)
+    const dialogRef = this.dialog.open(ProductoEdicionComponent, {
+      width: '500px',
+      maxHeight: '600px',
+      data: {idProducto: element.idProducto,
+        nombre: element.nombre,
+        descripcion: element.descripcion,
+        precio: element.precio,
+        categoriaProducto: element.categoriaProducto,
+        stock: element.stock}
+    });
+
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`The dialog was closed  ${result}`);
+
+    });
+
+  }
 
 
 

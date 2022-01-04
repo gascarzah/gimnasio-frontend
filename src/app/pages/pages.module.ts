@@ -1,3 +1,4 @@
+import { MatIconModule } from '@angular/material/icon';
 import { ListaVentaComponent } from './venta/lista-venta/lista-venta.component';
 import { PlanEdicionComponent } from './plan/plan-edicion/plan-edicion.component';
 import { EmpleadoEdicionComponent } from './empleado/empleado-edicion/empleado-edicion.component';
@@ -12,7 +13,7 @@ import { ClienteComponent } from './cliente/cliente.component';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { MaterialModule } from '../material/material.module';
@@ -27,18 +28,18 @@ import { TokenComponent } from './login/recuperar/token/token.component';
 
 
 @NgModule({
-    imports: [
-        MaterialModule,
-        CommonModule,
-        HttpClientModule,
-        ReactiveFormsModule,
-        FormsModule,
-        FlexLayoutModule,
-        PdfViewerModule,
-        PagesRoutingModule
-    ],
-    exports: [],
-    declarations: [
+  imports: [
+    MaterialModule,
+    CommonModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatIconModule,
+    PdfViewerModule,
+    PagesRoutingModule
+  ],
+  exports: [],
+  declarations: [
     ClienteComponent,
     EmpleadoComponent,
     PlanComponent,
@@ -51,14 +52,14 @@ import { TokenComponent } from './login/recuperar/token/token.component';
     EmpleadoEdicionComponent,
     PlanEdicionComponent,
     ListaVentaComponent,
-        LayoutComponent,
-        InicioComponent,
-        Not403Component,
-        Not404Component,
-        RecuperarComponent,
-        TokenComponent  ,
-        InicioComponent
-    ],
-    providers: [],
+    LayoutComponent,
+    InicioComponent,
+    Not403Component,
+    Not404Component,
+    RecuperarComponent,
+    TokenComponent,
+    InicioComponent
+  ],
+  providers: [],
 })
 export class PagesModule { }

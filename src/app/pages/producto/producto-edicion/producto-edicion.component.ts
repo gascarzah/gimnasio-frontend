@@ -1,3 +1,4 @@
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -7,7 +8,7 @@ import { switchMap } from 'rxjs/operators';
 import { Producto } from '../../../_model/producto';
 import { ProductoService } from '../../../_service/producto.service';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -26,8 +27,8 @@ export class ProductoEdicionComponent implements OnInit {
  idProducto: number;
 
  cantidad: number;
-
-
+ mensaje: string;
+ habilitado: boolean = true
  displayedColumns = [ 'insumo', 'cantidad','unidad'];
  columnsToDisplay: string[] = this.displayedColumns.slice();
 
@@ -35,109 +36,113 @@ export class ProductoEdicionComponent implements OnInit {
  idInsumoSeleccionado: number;
 
 
-  constructor(private productoService: ProductoService,
-
-    private route: ActivatedRoute,
-    private router: Router,
+  constructor(public dialogRef: MatDialogRef<ProductoEdicionComponent>,
+    private productoService: ProductoService,
+    @Inject(MAT_DIALOG_DATA) public data: Producto,
     private snackBar: MatSnackBar,
-) { }
 
-  ngOnInit(): void {
+) {
+  console.log(data)
+  if(this.data.idProducto == null){
+    this.habilitado = false
+  }else{
+    this.habilitado = true
+  }
 
-    this.producto = new Producto();
 
-    this.form = new FormGroup({
-      'id': new FormControl(0),
-      'nombre': new FormControl(''),
-      'descripcion': new FormControl(''),
-      'precio': new FormControl(''),
-      'categoriaProducto': new FormControl(''),
-      'cantidad': new FormControl(''),
-      'insumo': new FormControl(''),
-      'unidad': new FormControl(''),
-    })
 
-    this.route.params.subscribe((params: Params) => {
-      this.idProducto = params['id'];
-      this.edicion = params['id'] != null;
-      this.initForm();
+ }
+
+ ngOnInit(): void {
+
+}
+
+
+registrar(): void {
+
+if(this.validacion(this.data)){
+  if(this.data.idProducto == undefined){
+    this.productoService.registrar(this.data).pipe(switchMap(() => {
+    return this.productoService.listar();
+  })).subscribe(data => {
+    this.productoService.productoCambio.next(data);
+    this.productoService.mensajeCambio.next('SE REGISTRO');
+  });
+  }else{
+    this.productoService.modificar(this.data).subscribe(() => {
+      this.productoService.listar().subscribe(data => {
+        this.productoService.setProductoCambio(data);
+        this.productoService.setMensajeCambio('SE MODIFICÓ');
+      });
     });
   }
+  this.dialogRef.close();
+}
+}
 
-  initForm() {
-    if (this.edicion) {
-      this.productoService.listarPorId(this.idProducto).subscribe(data => {
+validacion(data: Producto){
 
-        let id = data.idProducto;
-        let nombre = data.nombre;
+if(!data.nombre){
+  this.mensaje = `Debe agregar un nombre`;
+  this.snackBar.open(this.mensaje, "Aviso", { duration: 2000 });
+  return false
+}else if(!data.descripcion){
+  this.mensaje = `Ingresar descripcion`;
+  this.snackBar.open(this.mensaje, "Aviso", { duration: 2000 });
+  return false
+}else if(!data.precio){
+  this.mensaje = `Ingresar precio`;
+  this.snackBar.open(this.mensaje, "Aviso", { duration: 2000 });
+  return false
+}else if(!data.stock){
+  this.mensaje = `Ingresar stock`;
+  this.snackBar.open(this.mensaje, "Aviso", { duration: 2000 });
+  return false
+}
 
-        this.form = new FormGroup({
-          'id': new FormControl(id),
-          'nombre': new FormControl(nombre),
-          'descripcion': new FormControl(data.descripcion),
+return true
 
-          'precio': new FormControl(data.precio),
-          'categoriaInsumo': new FormControl(''),
-          'cantidad': new FormControl(''),
-          'insumo': new FormControl(''),
-      'unidad': new FormControl(''),
-        });
-
-
-        // this.productoDetalleService.listarProductosDetalle(id).subscribe(data => {
-        //   this.productoDetalleArr = data
-        // });
-
-      });
-    }
-  }
-
-
-  operar() {
-    console.log('entro a operar')
-    this.producto.idProducto = this.form.value['id'];
-    this.producto.nombre = this.form.value['nombre'];
-    this.producto.precio = this.form.value['precio'];
-    this.producto.descripcion = this.form.value['descripcion'];
-    // let categoriaProducto = new CategoriaProducto()
-    // categoriaProducto = this.form.value['categoriaProducto'];
-
-    // let destino = new Destino()
-    // destino.idDestino = 1
-
-    // let productoDto = new ProductoDto()
-    // productoDto.producto = this.producto
-    // productoDto.productoDetalles = this.productoDetalleArr
-    // console.log(productoDto)
-
-    if (this.producto != null && this.producto.idProducto > 0) {
-
-      //BUENA PRACTICA
-      this.productoService.registrar(this.producto).pipe(switchMap(() => {
-        return this.productoService.listar();
-      })).subscribe(data => {
-        this.productoService.setProductoCambio(data);
-        this.productoService.setMensajeCambio("Se modificó");
-      });
-
-    } else {
-      //PRACTICA COMUN
-      this.productoService.modificar(this.producto).pipe(switchMap(() => {
-        return this.productoService.listar()
-      })).subscribe(data => {
-        this.productoService.setProductoCambio(data)
-        this.productoService.setMensajeCambio("Se registró")
-      })
-    }
-
-    this.router.navigate(['producto']);
-  }
+}
 
 
+public objectComparisonFunction = function( option: any, value: any ) : boolean {
+return option.idCategoriaProducto === value.idCategoriaProducto;
+}
+keyPressAlpha(event: any) {
 
-  public objectComparisonFunction = function( option: any, value: any ) : boolean {
-    return option.idCategoriaProducto === value.idCategoriaProducto;
-  }
+var inp = String.fromCharCode(event.keyCode);
 
+if (/[a-zA-Z ]/.test(inp)) {
+  return true;
+} else {
+  event.preventDefault();
+  return false;
+}
+}
+
+// Only Integer Numbers
+keyPressNumbers(event: any) {
+var charCode = (event.which) ? event.which : event.keyCode;
+// Only Numbers 0-9
+if ((charCode < 48 || charCode > 57)) {
+event.preventDefault();
+return false;
+} else {
+return true;
+}
+}
+
+// Only AlphaNumeric with Some Characters [-_ ]
+keyPressAlphaNumericWithCharacters(event: any) {
+
+var inp = String.fromCharCode(event.keyCode);
+// Allow numbers, alpahbets, space, underscore
+if (/[a-zA-Z0-9-_. ]/.test(inp)) {
+return true;
+} else {
+event.preventDefault();
+return false;
+}
+}
 
 }

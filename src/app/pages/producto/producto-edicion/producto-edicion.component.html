@@ -1,32 +1,36 @@
-<form  [formGroup]="form" (ngSubmit)="operar()" #espForm="ngForm">
+<h1 mat-dialog-title>Registro Producto</h1>
+<div mat-dialog-content>
 
-<div class="wrapper ">
-
-
-  <div class="aside">
- <mat-toolbar>Productos</mat-toolbar>
-       <div [hidden]="true">
-          <mat-form-field appearance="fill">
-              <input matInput placeholder="ID" required formControlName="id">
-          </mat-form-field>
-      </div>
-
-      <mat-form-field appearance="fill" >
-          <input matInput placeholder="Nombre Producto" required formControlName="nombre">
-      </mat-form-field>
-
-      <mat-form-field appearance="fill">
-        <input matInput placeholder="Descripcion" required formControlName="descripcion">
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" >
-      <input matInput placeholder="Precio" required formControlName="precio" >
-    </mat-form-field>
+  <mat-form-field>
+    <mat-label>Nombre</mat-label>
+    <input matInput [(ngModel)]="data.nombre" (keypress)="keyPressAlpha($event)" (ngModelChange)="data.nombre=$event.trim()" [disabled] = 'habilitado' >
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Descripcion</mat-label>
+    <input matInput [(ngModel)]="data.descripcion" (keypress)="keyPressAlpha($event)" (ngModelChange)="data.descripcion=$event.toUpperCase().trim()" required>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Precio</mat-label>
+    <input matInput [(ngModel)]="data.precio" (keypress)="keyPressAlphaNumericWithCharacters($event)" (ngModelChange)="data.precio=$event.toUpperCase().trim()" required>
+  </mat-form-field>
 
 
 
-    <button mat-raised-button color="primary" type="submit" >Registrar</button>
-  </div>
+  <mat-form-field>
+    <mat-label>Stock</mat-label>
+    <input matInput [(ngModel)]="data.stock"  (keypress)="keyPressNumbers($event)" (ngModelChange)="data.stock=$event.trim()" required>
+  </mat-form-field>
+
+
+<br/>
+
 
 </div>
-</form>
+<div mat-dialog-actions>
+  <button mat-button (click)="registrar()" >
+    <mat-icon>done</mat-icon>
+    <span>Aceptar</span>
+  </button>
+
+  <button mat-button [mat-dialog-close]="data.nombre" cdkFocusInitial>Cerrar</button>
+</div>
